@@ -41,18 +41,19 @@ let rollAmount = 0;
 let diceToRoll = 5;
 let firstHand = [];
 
-while (rollAmount < diceToRoll) {
-  let n = Math.trunc(Math.random() * 6) + 1;
-  rollAmount++;
-}
-
+// Rolls new number if die does NOT have class 'dice--selected'
 function rollDice() {
-  for (let dice of rollDiceEl) {
-    let n = Math.trunc(Math.random() * 6) + 1;
-    dice.src = `images/dice-${n}.png`;
-    firstHand.push(n);
-    console.log(firstHand);
-  }
+  firstHand = [];
+  $(".dice").each(function () {
+    if ($(this).hasClass("dice--selected")) {
+      void 0;
+    } else {
+      let n = Math.trunc(Math.random() * 6) + 1;
+      $(this).attr("src", `images/dice-${n}.png`);
+      firstHand.push(n);
+      console.log(firstHand);
+    }
+  });
 }
 
 rollBtn.click(() => {
