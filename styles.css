@@ -44,17 +44,15 @@ body {
   padding-right: 20px;
 }
 
-.roll {
-  position: absolute;
+.btn {
   align-items: center;
   font-size: 5rem;
 }
 
-.btns-box {
-  display: inline-block;
-  align-content: center;
-}
-
 .dice--selected {
   opacity: 0.5;
+}
+
+.disable {
+  opacity: 1;
 }
