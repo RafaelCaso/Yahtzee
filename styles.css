@@ -56,3 +56,7 @@ body {
 .disable {
   opacity: 1;
 }
+
+.scoreBoxes {
+  display: flex;
+}
