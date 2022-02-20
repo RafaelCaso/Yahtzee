@@ -11,7 +11,6 @@ let isPlaying = true;
 timesRolled = 0;
 
 rollBtn.click(() => {
-  checkGameOver();
   if (isPlaying) {
     if (canRoll) {
       rollDice();
@@ -20,10 +19,10 @@ rollBtn.click(() => {
 });
 
 scoreBtn.click(() => {
-  checkGameOver();
   timesRolled = 0;
   placeScore();
   $(".dice").removeClass("dice--selected");
+  checkGameOver();
   promptUser("Click on Roll button to begin");
 });
 
@@ -42,7 +41,6 @@ function promptUser(message) {
 
 // Iterate through all dice and roll new number if die does NOT have class 'dice--selected' and player has not already rolled 3 times
 function rollDice() {
-  checkGameOver();
   if (canRoll) {
     $(".dice").each(function () {
       if ($(this).hasClass("dice--selected")) {
@@ -107,7 +105,6 @@ function displayScoreBox() {
 displayScoreBox();
 
 function placeScore() {
-  checkGameOver();
   if (isPlaying) {
     hand = [];
     // get the value for dice by extracting the number from image file name then push that number to hand
@@ -128,9 +125,7 @@ function placeScore() {
       $("input[name=score]:checked").remove();
       $(`.label${scoreBox}`).remove();
       $(".dice").removeClass("dice--selected").attr("src", "images/blank.png");
-      checkGameOver();
     }
-    checkGameOver();
   } else {
     void 0;
   }
@@ -151,6 +146,60 @@ const fiveScore = (arr) => arr.reduce((a, v) => (v === 5 ? a + 1 : a), 0) * 5;
 
 const sixScore = (arr) => arr.reduce((a, v) => (v === 6 ? a + 1 : a), 0) * 6;
 
+const threeKindScore = function (arr) {
+  if (
+    (arr[0] === arr[1] && arr[1] === arr[2]) ||
+    (arr[2] === arr[3] && arr[3] === arr[4])
+  ) {
+    return arr.reduce((a, b) => a + b, 0);
+  } else {
+    return 0;
+  }
+};
+
+const fourKindScore = function (arr) {
+  if (arr[0] === arr[1] && arr[1] === arr[2] && arr[2] === arr[3]) {
+    return arr.reduce((a, b) => a + b, 0);
+  } else if (arr[1] === arr[2] && arr[2] === arr[3] && arr[3] === arr[4]) {
+    return arr.reduce((a, b) => a + b, 0);
+  } else {
+    return 0;
+  }
+};
+
+const fullHouseScore = function (arr) {
+  if (arr[0] === arr[1] && arr[1] === arr[2] && arr[3] === arr[4]) {
+    return 25;
+  } else if (arr[0] === arr[1] && arr[2] === arr[3] && arr[3] === arr[4]) {
+    return 25;
+  } else {
+    return 0;
+  }
+};
+
+const smallStraightScore = function (arr) {
+  if (arr[0] < arr[1] && arr[1] < arr[2] && arr[2] < arr[3]) {
+    return 30;
+  } else if (arr[1] < arr[2] && arr[2] < arr[3] && arr[3] < arr[4]) {
+    return 30;
+  } else {
+    return 0;
+  }
+};
+
+const largeStraightScore = function (arr) {
+  if (
+    arr[0] < arr[1] &&
+    arr[1] < arr[2] &&
+    arr[2] < arr[3] &&
+    arr[3] < arr[4]
+  ) {
+    return 40;
+  } else {
+    return 0;
+  }
+};
+
 const allEqual = (arr) => arr.every((val) => val === arr[0]);
 const yahtzeeScore = () => {
   if (allEqual(score[11]) && score[11].length > 0) {
@@ -158,6 +207,14 @@ const yahtzeeScore = () => {
   } else {
     return 0;
   }
+};
+
+const chanceScore = function (arr) {
+  let scoreTotal = 0;
+  for (let i = 0; i < arr.length; i++) {
+    scoreTotal += arr[i];
+  }
+  return scoreTotal;
 };
 
 const finalScore = () => {
@@ -168,7 +225,13 @@ const finalScore = () => {
     fourScore(score[3]) +
     fiveScore(score[4]) +
     sixScore(score[5]) +
-    yahtzeeScore();
+    threeKindScore(score[6].sort()) +
+    fourKindScore(score[7].sort()) +
+    fullHouseScore(score[8].sort()) +
+    smallStraightScore(score[9].sort()) +
+    largeStraightScore(score[10].sort()) +
+    yahtzeeScore() +
+    chanceScore(score[12]);
 
   return output;
 };
