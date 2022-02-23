@@ -8,6 +8,8 @@ let hand, timesRolled;
 let canRoll = true;
 let isPlaying = true;
 
+while (isPlaying) {}
+
 timesRolled = 0;
 
 rollBtn.click(() => {
