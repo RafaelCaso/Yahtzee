@@ -4,11 +4,10 @@ const rollBtn = $(".roll");
 const scoreBtn = $(".score");
 const userPrompt = $("h1");
 
-let hand, timesRolled;
-let canRoll = true;
-let isPlaying = true;
+let hand, timesRolled, canRoll, isPlaying;
 
-while (isPlaying) {}
+canRoll = true;
+isPlaying = true;
 
 timesRolled = 0;
 
@@ -64,77 +63,90 @@ function rollDice() {
 // create ui scoreboxes. id's used to
 function displayScoreBox() {
   $("#scoreBoxUpper").append(
-    `<input type='radio' id='0' name='score'><p class='label0'>aces</p>`
+    `<div><label id='score-box-0' class='radio-label'><input type='radio' id='0' name='score'> aces</label><br><br></div>`
   );
   $("#scoreBoxUpper").append(
-    `<input type='radio' id='1' name='score'><p class='label1'>twos</p>`
+    `<div><label id='score-box-1' class='radio-label'><input type='radio' id='1' name='score'> twos</label><br><br></div>`
   );
   $("#scoreBoxUpper").append(
-    `<input type='radio' id='2' name='score'><p class='label2'>threes</p>`
+    `<div><label id='score-box-2' class='radio-label'><input type='radio' id='2' name='score'> threes</label><br><br></div>`
   );
   $("#scoreBoxUpper").append(
-    `<input type='radio' id='3' name='score'><p class='label3'>fours</p>`
+    `<div><label id='score-box-3' class='radio-label'><input type='radio' id='3' name='score'> fours</label><br><br></div>`
   );
   $("#scoreBoxUpper").append(
-    `<input type='radio' id='4' name='score'><p class='label4'>fives</p>`
+    `<div><label id='score-box-4' class='radio-label'><input type='radio' id='4' name='score'> fives</label><br><br></div>`
   );
   $("#scoreBoxUpper").append(
-    `<input type='radio' id='5' name='score'><p class='label5'>sixes</p>`
+    `<div><label id='score-box-5' class='radio-label'><input type='radio' id='5' name='score'> sixes</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='6' name='score'><p class='label6'>Three of a Kind</p>`
+    `<div><label id='score-box-6' class='radio-label'><input type='radio' id='6' name='score'> Three of a Kind</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='7' name='score'><p class='label7'>Four of a Kind</p>`
+    `<div><label id='score-box-7' class='radio-label'><input type='radio' id='7' name='score'> Four of a Kind</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='8' name='score'><p class='label8'>Full House</p>`
+    `<div><label id='score-box-8' class='radio-label'><input type='radio' id='8' name='score'> Full House</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='9' name='score'><p class='label9'>Small Straight</p>`
+    `<div><label id='score-box-9' class='radio-label'><input type='radio' id='9' name='score'> Small Straight</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='10' name='score'><p class='label10'>Large Straight</p>`
+    `<div><label id='score-box-10' class='radio-label'><input type='radio' id='10' name='score'> Large Straight</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='11' name='score'><p class='label11'>Yahtzee</p>`
+    `<div><label id='score-box-11' class='radio-label'><input type='radio' id='11' name='score'> Yahtzee</label><br><br></div>`
   );
   $("#scoreBoxLower").append(
-    `<input type='radio' id='12' name='score'><p class='label12'>Chance</p>`
+    `<div><label id='score-box-12' class='radio-label'><input type='radio' id='12' name='score'> Chance</label><br><br></div>`
   );
 }
-
-displayScoreBox();
 
 function placeScore() {
-  if (isPlaying) {
-    hand = [];
-    // get the value for dice by extracting the number from image file name then push that number to hand
-    $(".dice").each(function () {
-      const score = $(this).attr("src");
-      hand.push(Number(score.split("")[12]));
-    });
-    // below conditionals not working as expected
-    promptUser(
-      "Select the box you would like to score then click 'Place Score'"
-    );
-    let scoreBox = $("input[name=score]:checked").attr("id");
-    if (score[scoreBox].length > 0) {
-      promptUser("That box is already scored. Try again");
-    } else {
-      score[scoreBox] = hand;
-      canRoll = true;
-      $("input[name=score]:checked").remove();
-      $(`.label${scoreBox}`).remove();
-      $(".dice").removeClass("dice--selected").attr("src", "images/blank.png");
-    }
-  } else {
+  hand = [];
+  // get the value for dice by extracting the number from image file name then push that number to hand
+  $(".dice").each(function () {
+    const score = $(this).attr("src");
+    hand.push(Number(score.split("")[12]));
+  });
+  // below conditionals not working as expected
+  let scoreBox = $("input[name=score]:checked").attr("id");
+  score[scoreBox] = hand;
+  canRoll = true;
+  $(`#score-box-${scoreBox}`).remove();
+  //$(`.label${scoreBox}`).remove();
+  $(".dice").removeClass("dice--selected").attr("src", "images/blank.png");
+
+  if (gameIsPlaying()) {
     void 0;
+  } else {
+    promptUser(`GAME OVER Your Score:${finalScore()}`);
+    isPlaying = false;
+    canRoll = false;
+    $(".dice").remove();
   }
-  checkGameOver();
 }
 
-// upper scoring
+// checks if there are any empty score boxes. If so, returns true and game continues playing
+const gameIsPlaying = function () {
+  let emptyBoxes = 0;
+  for (let i = 0; i < score.length; i++) {
+    if (score[i] === undefined || score[i].length === 0) {
+      emptyBoxes++;
+    } else {
+      void 0;
+    }
+  }
+
+  if (emptyBoxes > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+// scoring
 // check if score box contains corresponding dice value (v) and add 1 to total amount (a). Total then multiplied by corresponding scorebox (eg. 2 for 2's, 3 for 3's etc.)
 const aceScore = (arr) => arr.reduce((a, v) => (v === 1 ? a + 1 : a), 0);
 
@@ -238,21 +250,4 @@ const finalScore = () => {
   return output;
 };
 
-// checks if player has filled in every score box and ends game if true
-const checkGameOver = function () {
-  let emptyScoreBoxes = 13;
-
-  for (let i = 0; i < score.length; i++) {
-    if (score[i] === undefined || score[i].length === 0) {
-      void 0;
-    } else {
-      emptyScoreBoxes--;
-    }
-  }
-  if (emptyScoreBoxes === 0) {
-    promptUser(`GAME OVER Your Score:${finalScore()}`);
-    isPlaying = false;
-    canRoll = false;
-    $(".dice").remove();
-  }
-};
+displayScoreBox();
