@@ -1,4 +1,19 @@
 let score = [[], [], [], [], [], [], [], [], [], [], [], [], []];
+let names = [
+  "aces",
+  "twos",
+  "threes",
+  "fours",
+  "fives",
+  "sixes",
+  "Three of a Kind",
+  "Four of a Kind",
+  "Full House",
+  "Small Straight",
+  "Large Straight",
+  "Yahtzee",
+  "Chance",
+];
 
 const rollBtn = $(".roll");
 const scoreBtn = $(".score");
@@ -42,6 +57,7 @@ function promptUser(message) {
 
 // Iterate through all dice and roll new number if die does NOT have class 'dice--selected' and player has not already rolled 3 times
 function rollDice() {
+  promptUser("Click on dice to hold them before rerolling");
   if (canRoll) {
     $(".dice").each(function () {
       if ($(this).hasClass("dice--selected")) {
@@ -60,68 +76,47 @@ function rollDice() {
   }
 }
 
-// create ui scoreboxes. id's used to
-function displayScoreBox() {
-  $("#scoreBoxUpper").append(
-    `<div><label id='score-box-0' class='radio-label'><input type='radio' id='0' name='score'> aces</label><br><br></div>`
-  );
-  $("#scoreBoxUpper").append(
-    `<div><label id='score-box-1' class='radio-label'><input type='radio' id='1' name='score'> twos</label><br><br></div>`
-  );
-  $("#scoreBoxUpper").append(
-    `<div><label id='score-box-2' class='radio-label'><input type='radio' id='2' name='score'> threes</label><br><br></div>`
-  );
-  $("#scoreBoxUpper").append(
-    `<div><label id='score-box-3' class='radio-label'><input type='radio' id='3' name='score'> fours</label><br><br></div>`
-  );
-  $("#scoreBoxUpper").append(
-    `<div><label id='score-box-4' class='radio-label'><input type='radio' id='4' name='score'> fives</label><br><br></div>`
-  );
-  $("#scoreBoxUpper").append(
-    `<div><label id='score-box-5' class='radio-label'><input type='radio' id='5' name='score'> sixes</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-6' class='radio-label'><input type='radio' id='6' name='score'> Three of a Kind</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-7' class='radio-label'><input type='radio' id='7' name='score'> Four of a Kind</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-8' class='radio-label'><input type='radio' id='8' name='score'> Full House</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-9' class='radio-label'><input type='radio' id='9' name='score'> Small Straight</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-10' class='radio-label'><input type='radio' id='10' name='score'> Large Straight</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-11' class='radio-label'><input type='radio' id='11' name='score'> Yahtzee</label><br><br></div>`
-  );
-  $("#scoreBoxLower").append(
-    `<div><label id='score-box-12' class='radio-label'><input type='radio' id='12' name='score'> Chance</label><br><br></div>`
-  );
+for (let i = 0; i < score.length; i++) {
+  if (i < 6) {
+    $("#scoreBoxUpper").append(
+      `<div><label id='score-box-${i}' class='radio-label'><input type='radio' id='${i}' name='score'>${names[i]}</label><br><br></div>`
+    );
+  } else {
+    $("#scoreBoxLower").append(
+      `<div><label id='score-box-${i}' class='radio-label'><input type='radio' id='${i}' name='score'>${names[i]}</label><br><br></div>`
+    );
+  }
 }
 
 function placeScore() {
-  hand = [];
-  // get the value for dice by extracting the number from image file name then push that number to hand
-  $(".dice").each(function () {
-    const score = $(this).attr("src");
-    hand.push(Number(score.split("")[12]));
-  });
-  // below conditionals not working as expected
-  let scoreBox = $("input[name=score]:checked").attr("id");
-  score[scoreBox] = hand;
-  canRoll = true;
-  $(`#score-box-${scoreBox}`).remove();
-  //$(`.label${scoreBox}`).remove();
-  $(".dice").removeClass("dice--selected").attr("src", "images/blank.png");
-
+  // check if no radio buttons are selected
+  if (!$("input").is(":checked")) {
+    promptUser("Select a box to score then click 'Place Score'");
+  } else {
+    hand = [];
+    // get the value for dice by extracting the number from image file name then push that number to hand
+    $(".dice").each(function () {
+      const score = $(this).attr("src");
+      hand.push(Number(score.split("")[12]));
+    });
+    // check that player has rolled dice before scoring
+    if (hand.includes(NaN)) {
+      promptUser("Roll dice before scoring");
+    } else {
+      let scoreBox = $("input[name=score]:checked").attr("id");
+      score[scoreBox] = hand;
+      canRoll = true;
+      $(`#score-box-${scoreBox}`).remove();
+      //$(`.label${scoreBox}`).remove();
+      $(".dice").removeClass("dice--selected").attr("src", "images/blank.png");
+      promptUser("Click 'Roll' to begin");
+    }
+  }
+  // check if score entered was the last score box
   if (gameIsPlaying()) {
     void 0;
   } else {
-    promptUser(`GAME OVER Your Score:${finalScore()}`);
+    promptUser(`Final Score:${finalScore()}`);
     isPlaying = false;
     canRoll = false;
     $(".dice").remove();
@@ -147,7 +142,7 @@ const gameIsPlaying = function () {
 };
 
 // scoring
-// check if score box contains corresponding dice value (v) and add 1 to total amount (a). Total then multiplied by corresponding scorebox (eg. 2 for 2's, 3 for 3's etc.)
+// check if score box contains corresponding dice value (v) and add 1 to total amount (a). Total then multiplied by corresponding scorebox (eg.  2 for 2's, 3 for 3's etc.)
 const aceScore = (arr) => arr.reduce((a, v) => (v === 1 ? a + 1 : a), 0);
 
 const twoScore = (arr) => arr.reduce((a, v) => (v === 2 ? a + 1 : a), 0) * 2;
@@ -160,6 +155,7 @@ const fiveScore = (arr) => arr.reduce((a, v) => (v === 5 ? a + 1 : a), 0) * 5;
 
 const sixScore = (arr) => arr.reduce((a, v) => (v === 6 ? a + 1 : a), 0) * 6;
 
+// sorted array passed as argument
 const threeKindScore = function (arr) {
   if (
     (arr[0] === arr[1] && arr[1] === arr[2]) ||
@@ -170,7 +166,7 @@ const threeKindScore = function (arr) {
     return 0;
   }
 };
-
+// sorted array passed as argument
 const fourKindScore = function (arr) {
   if (arr[0] === arr[1] && arr[1] === arr[2] && arr[2] === arr[3]) {
     return arr.reduce((a, b) => a + b, 0);
@@ -181,6 +177,7 @@ const fourKindScore = function (arr) {
   }
 };
 
+//sorted array passed as argument
 const fullHouseScore = function (arr) {
   if (arr[0] === arr[1] && arr[1] === arr[2] && arr[3] === arr[4]) {
     return 25;
@@ -191,6 +188,7 @@ const fullHouseScore = function (arr) {
   }
 };
 
+//sorted array passed as argument
 const smallStraightScore = function (arr) {
   if (arr[0] < arr[1] && arr[1] < arr[2] && arr[2] < arr[3]) {
     return 30;
@@ -201,6 +199,7 @@ const smallStraightScore = function (arr) {
   }
 };
 
+//sorted array passed as argument
 const largeStraightScore = function (arr) {
   if (
     arr[0] < arr[1] &&
@@ -249,5 +248,3 @@ const finalScore = () => {
 
   return output;
 };
-
-displayScoreBox();

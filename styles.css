@@ -3,7 +3,7 @@
   --color-2: #faeee0;
   --color-3: #f9e4c8;
   --color-4: #f9cf93;
-  --color-5: #f0a500;
+  --color-5: #e3caa5;
 }
 
 * {
@@ -19,23 +19,26 @@ html {
 }
 
 h1 {
-  padding-top: 100px;
+  padding-top: 40px;
   text-align: center;
   font-size: 5rem;
   color: #444;
 }
 
 body {
-  background-color: var(--color-4);
+  background-color: var(--color-5);
 }
 
 .dice-box {
   align-content: center;
   padding-top: 100px;
   padding-bottom: 100px;
+  margin-left: 100px;
+  margin-right: 100px;
 
   text-align: center;
-  background-color: var(--color-5);
+  background-image: url("https://i.ibb.co/t2ghNcR/light-wood.jpg");
+  border-radius: 15rem;
 }
 
 .dice {
@@ -64,4 +67,43 @@ body {
 
 .scoreBoxes {
   display: flex;
+  margin-left: 500px;
+  margin-top: 20px;
+}
+
+footer {
+  align-content: center;
+  font-size: 2rem;
+}
+
+#scoreBoxUpper {
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkgHA3HmnjaxfI9BrXdYwH7vEy6BtQIA2_eOPasE1gR6qnqmTmMlOO__dHQFgB4SxpMgk&usqp=CAU");
+  min-width: 150px;
+  min-height: 260px;
+  margin-right: 20px;
+  padding-top: 10px;
+}
+
+#scoreBoxUpper input {
+  margin-top: 8px;
+  margin-left: 22px;
+}
+
+#scoreBoxLower {
+  background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkgHA3HmnjaxfI9BrXdYwH7vEy6BtQIA2_eOPasE1gR6qnqmTmMlOO__dHQFgB4SxpMgk&usqp=CAU");
+  min-width: 150px;
+  min-height: 260px;
+  margin-right: 20px;
+  padding-top: 10px;
+}
+
+#scoreBoxLower input {
+  margin-top: 8px;
+  margin-left: 22px;
+}
+
+.placeScore {
+  border-radius: 15rem;
+  max-height: 200px;
+  max-width: 200px;
 }
